@@ -1,0 +1,12 @@
+
+*.txt
+
+*.iml
+
+*.xml
+
+.idea/.name
+
+*.class
+
+*.MF
