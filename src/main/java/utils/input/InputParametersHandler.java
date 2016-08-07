@@ -23,6 +23,9 @@ public class InputParametersHandler {
 
     public InputParametersHandler(String[] args) {
         this.args = args;
+        if (args.length<1){
+
+        }
         options.addOption("h", "help", false, "show help.");
         options.addOption("l", "lang", true, "Chosen language filter");
         options.addOption("k", "key", true, "Chosen keywords");
@@ -47,8 +50,8 @@ public class InputParametersHandler {
         }
 
         if (cmd.hasOption("l")) {
-            String langValue = cmd.getOptionValue("l");
-            languages = InputParametersParser.parseInputValues(langValue);
+            String langValues = cmd.getOptionValue("l");
+            languages = InputParametersParser.parseInputValues(langValues);
             log.log(Level.INFO, "Using languages parameters -l= "+ languages.toString());
         }
         if (cmd.hasOption("k")) {
