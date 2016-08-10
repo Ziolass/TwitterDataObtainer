@@ -51,12 +51,9 @@ public class TwitterClientImpl {
 
     public void prepareForStreaming(InputParametersHolder inputParametersHolder, ConfigModel configModel) {
 
-        if (inputParametersHolder.isAreKeywordsDefined()) {
-            hosebirdEndpoint.trackTerms(inputParametersHolder.getKeywords());
-        }
-        if (inputParametersHolder.isAreLanguagesDefined()) {
-            hosebirdEndpoint.languages(inputParametersHolder.getLanguages());
-        }
+        hosebirdEndpoint.trackTerms(inputParametersHolder.getKeywords());
+        hosebirdEndpoint.languages(inputParametersHolder.getLanguages());
+
 
         hosebirdAuth = new OAuth1(configModel.getConsumerKey(),
                 configModel.getConsumerSecret(),
@@ -86,7 +83,7 @@ public class TwitterClientImpl {
 
                 String msg = msgQueue.take();
                 System.out.println(parser.processTweet(msg.toString()));
-                stringBuilder.append(parser.processTweet(msg.toString()) + "\n");
+//                stringBuilder.append(parser.processTweet(msg.toString()) + "\n");
                 i++;
                 if (i == 100000) {
                     hosebirdClient.isDone();
@@ -101,22 +98,22 @@ public class TwitterClientImpl {
                 }
             }
         }
-
-        String date = new SimpleDateFormat("dd_MM").format(new Date());
-        File file = new File("dump" + date + ".txt");
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(file));
-            writer.write(stringBuilder.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (writer != null) try {
-                writer.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+//
+//        String date = new SimpleDateFormat("dd_MM").format(new Date());
+//        File file = new File("dump" + date + ".txt");
+//        BufferedWriter writer = null;
+//        try {
+//            writer = new BufferedWriter(new FileWriter(file));
+//            writer.write(stringBuilder.toString());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (writer != null) try {
+//                writer.close();
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//        }
     }
 
 // Attempts to establish a connection.

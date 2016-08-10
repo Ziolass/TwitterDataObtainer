@@ -8,8 +8,6 @@ import java.util.List;
 public class InputParametersHolder {
     private final List<String> languages;
     private final List<String> keywords;
-    private final boolean areLanguagesDefined;
-    private final boolean areKeywordsDefined;
 
     public List<String> getLanguages() {
         return languages;
@@ -19,20 +17,9 @@ public class InputParametersHolder {
         return keywords;
     }
 
-    public boolean isAreLanguagesDefined() {
-
-        return areLanguagesDefined;
-    }
-
-    public boolean isAreKeywordsDefined() {
-        return areKeywordsDefined;
-    }
-
     public InputParametersHolder(List<String> languages, List<String> keywords) {
         this.languages = languages;
         this.keywords = keywords;
-        areKeywordsDefined = keywords != null;
-        areLanguagesDefined = languages != null;
 
 
     }
