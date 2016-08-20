@@ -10,16 +10,20 @@ import com.twitter.hbc.core.event.Event;
 import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
+import database.DatabaseConnector;
+import database.PostGreConnector;
 import datamodel.ConfigModel;
+import datamodel.TweetModel;
+import javafx.scene.chart.PieChart;
 import utils.JsonParser;
 import utils.input.InputParametersHolder;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.sql.Connection;
 import java.util.Date;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -48,12 +52,21 @@ public class TwitterClientImpl {
         hosebirdEndpoint = new StatusesFilterEndpoint();
 
     }
+    public static Date getTwitterDate(String date) throws ParseException{
+
+        final String TWITTER="EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(TWITTER);
+        sf.setLenient(true);
+        return sf.parse(date);
+    }
 
     public void prepareForStreaming(InputParametersHolder inputParametersHolder, ConfigModel configModel) {
 
-        hosebirdEndpoint.trackTerms(inputParametersHolder.getKeywords());
-        hosebirdEndpoint.languages(inputParametersHolder.getLanguages());
+       // hosebirdEndpoint.trackTerms(inputParametersHolder.getKeywords());
+        //hosebirdEndpoint.languages(inputParametersHolder.getLanguages());
 
+        hosebirdEndpoint.trackTerms(Arrays.asList("a"));
+        hosebirdEndpoint.languages(Arrays.asList("pl"));
 
         hosebirdAuth = new OAuth1(configModel.getConsumerKey(),
                 configModel.getConsumerSecret(),
@@ -73,15 +86,29 @@ public class TwitterClientImpl {
 
     public void startStreaming() {
         StringBuilder stringBuilder = new StringBuilder();
+        Thread writer = new Thread();
+        DatabaseConnector databaseConnector = PostGreConnector.getInstance();
+        Connection connection = databaseConnector.getConnection();
+        PreparedStatement preparedStatement = null;
+        TweetModel tweetModel = null;
+
         hosebirdClient.connect();
         int i = 0;
         JsonParser parser = new JsonParser();
+        String statement="INSERT INTO TWEETS VALUES (?,?,?)";
 
         while (!hosebirdClient.isDone()) {
             try {
-                System.out.println(i);
-
+                preparedStatement = connection.prepareStatement(statement);
                 String msg = msgQueue.take();
+                tweetModel = parser.processTweet(msg.toString());
+
+                preparedStatement.setString(1,tweetModel.getId());
+                preparedStatement.setString(2,tweetModel.getText());
+                new Timestamp(Long.getLong(tweetModel.getCreation_time()));
+                preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+                //System.out.println(i);
+
                 System.out.println(parser.processTweet(msg.toString()));
 //                stringBuilder.append(parser.processTweet(msg.toString()) + "\n");
                 i++;

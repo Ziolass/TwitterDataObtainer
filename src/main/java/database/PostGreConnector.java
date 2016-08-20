@@ -12,6 +12,11 @@ public class PostGreConnector implements DatabaseConnector{
         return ourInstance;
     }
     private Connection connection;
+
+    public Connection getConnection() {
+        return connection;
+    }
+
     private PostGreConnector() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -28,6 +33,7 @@ public class PostGreConnector implements DatabaseConnector{
     }
     public String insertRecord(String message, int id){
         PreparedStatement preparedStatement = null;
+
         ResultSet resultSet =null;
         try {
             preparedStatement = connection.prepareStatement("INSERT INTO tweets VALUES (?,?)");

@@ -19,6 +19,7 @@ public class ApplicationInitializer {
         InputParametersHandler inputParametersHandler = new InputParametersHandler(args);
         InputParametersHolder inputParametersHolder = inputParametersHandler.getInputParameters();
 
+
         configReader = new ConfigReader();
         configModel = configReader.readConfig();
 
