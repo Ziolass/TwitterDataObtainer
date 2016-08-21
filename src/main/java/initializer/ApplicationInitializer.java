@@ -6,10 +6,16 @@ import utils.ConfigReader;
 import utils.input.InputParametersHandler;
 import utils.input.InputParametersHolder;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Logger;
+
 /**
  * Created by Michau on 03.08.2016.
  */
 public class ApplicationInitializer {
+    private static final Logger log = Logger.getLogger(InputParametersHandler.class.getName());
 
     public static void main(String[] args) {
 
@@ -19,6 +25,14 @@ public class ApplicationInitializer {
         InputParametersHandler inputParametersHandler = new InputParametersHandler(args);
         InputParametersHolder inputParametersHolder = inputParametersHandler.getInputParameters();
 
+        // DEBUG
+//        List<String> lang = new ArrayList<String>();
+//        lang.add("pl");
+//        List<String> word = new ArrayList<String>();
+//        word.add("play");
+//        word.add("plus");
+//        InputParametersHolder inputParametersHolder = new InputParametersHolder( lang, word );
+//        // DEBUG
 
         configReader = new ConfigReader();
         configModel = configReader.readConfig();

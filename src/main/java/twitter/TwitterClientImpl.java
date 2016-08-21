@@ -17,10 +17,9 @@ import datamodel.TweetModel;
 import javafx.scene.chart.PieChart;
 import utils.JsonParser;
 import utils.input.InputParametersHolder;
+
 import java.sql.Connection;
 import java.util.Date;
-import java.sql.PreparedStatement;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -52,17 +51,10 @@ public class TwitterClientImpl {
         hosebirdEndpoint = new StatusesFilterEndpoint();
 
     }
-    public static Date getTwitterDate(String date) throws ParseException{
-
-        final String TWITTER="EEE MMM dd HH:mm:ss ZZZZZ yyyy";
-        SimpleDateFormat sf = new SimpleDateFormat(TWITTER);
-        sf.setLenient(true);
-        return sf.parse(date);
-    }
 
     public void prepareForStreaming(InputParametersHolder inputParametersHolder, ConfigModel configModel) {
 
-       // hosebirdEndpoint.trackTerms(inputParametersHolder.getKeywords());
+        // hosebirdEndpoint.trackTerms(inputParametersHolder.getKeywords());
         //hosebirdEndpoint.languages(inputParametersHolder.getLanguages());
 
         hosebirdEndpoint.trackTerms(Arrays.asList("a"));
@@ -85,65 +77,35 @@ public class TwitterClientImpl {
     }
 
     public void startStreaming() {
-        StringBuilder stringBuilder = new StringBuilder();
-        Thread writer = new Thread();
         DatabaseConnector databaseConnector = PostGreConnector.getInstance();
-        Connection connection = databaseConnector.getConnection();
-        PreparedStatement preparedStatement = null;
         TweetModel tweetModel = null;
 
         hosebirdClient.connect();
-        int i = 0;
         JsonParser parser = new JsonParser();
-        String statement="INSERT INTO TWEETS VALUES (?,?,?)";
 
         while (!hosebirdClient.isDone()) {
             try {
-                preparedStatement = connection.prepareStatement(statement);
                 String msg = msgQueue.take();
                 tweetModel = parser.processTweet(msg.toString());
-
-                preparedStatement.setString(1,tweetModel.getId());
-                preparedStatement.setString(2,tweetModel.getText());
-                new Timestamp(Long.getLong(tweetModel.getCreation_time()));
-                preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-                //System.out.println(i);
-
-                System.out.println(parser.processTweet(msg.toString()));
-//                stringBuilder.append(parser.processTweet(msg.toString()) + "\n");
-                i++;
-                if (i == 100000) {
-                    hosebirdClient.isDone();
-                }
+                //DEBUG
+                System.out.println(tweetModel.getText());
+                //DEBUG
+                databaseConnector.insertRecord(tweetModel);
+                //System.out.println(parser.processTweet(msg.toString()));
+                //stringBuilder.append(parser.processTweet(msg.toString()) + "\n");
 
             } catch (Exception e) {
                 e.printStackTrace();
                 try {
                     hosebirdClient.stop();
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         }
-//
-//        String date = new SimpleDateFormat("dd_MM").format(new Date());
-//        File file = new File("dump" + date + ".txt");
-//        BufferedWriter writer = null;
-//        try {
-//            writer = new BufferedWriter(new FileWriter(file));
-//            writer.write(stringBuilder.toString());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (writer != null) try {
-//                writer.close();
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-    }
 
-// Attempts to establish a connection.
+    }
 
 
 }
