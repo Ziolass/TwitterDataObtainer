@@ -33,7 +33,8 @@ public class PostGreConnector implements DatabaseConnector{
 
     private PostGreConnector() {
         try {
-            Class.forName("org.postgresql.Driver");
+           Class.forName("postgresql.Driver");
+            //DriverManager.registerDriver( new org.postgresql.Driver());
             //DriverManager.registerDriver(new org.postgresql.Driver());
 
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/bachelor",

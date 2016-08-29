@@ -54,11 +54,8 @@ public class TwitterClientImpl {
 
     public void prepareForStreaming(InputParametersHolder inputParametersHolder, ConfigModel configModel) {
 
-        // hosebirdEndpoint.trackTerms(inputParametersHolder.getKeywords());
-        //hosebirdEndpoint.languages(inputParametersHolder.getLanguages());
-
-        hosebirdEndpoint.trackTerms(Arrays.asList("a"));
-        hosebirdEndpoint.languages(Arrays.asList("pl"));
+        hosebirdEndpoint.trackTerms(inputParametersHolder.getKeywords());
+        hosebirdEndpoint.languages(inputParametersHolder.getLanguages());
 
         hosebirdAuth = new OAuth1(configModel.getConsumerKey(),
                 configModel.getConsumerSecret(),
