@@ -16,9 +16,12 @@ import java.util.logging.Logger;
  * Created by Michau on 02.08.2016.
  */
 public class PostGreConnector implements DatabaseConnector{
-    private static PostGreConnector ourInstance = new PostGreConnector();
+    private static PostGreConnector ourInstance;
 
     public static PostGreConnector getInstance() {
+        if(ourInstance ==null) {
+            ourInstance = new PostGreConnector();
+        }
         return ourInstance;
     }
     private Connection connection;
@@ -33,9 +36,7 @@ public class PostGreConnector implements DatabaseConnector{
 
     private PostGreConnector() {
         try {
-           Class.forName("postgresql.Driver");
-            //DriverManager.registerDriver( new org.postgresql.Driver());
-            //DriverManager.registerDriver(new org.postgresql.Driver());
+           Class.forName("org.postgresql.Driver");
 
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/bachelor",
                         "bachelor", "bachelor");
@@ -50,11 +51,13 @@ public class PostGreConnector implements DatabaseConnector{
             sqlEx.printStackTrace();
         }
         counter = 0;
+        System.out.println(counter );
 
     }
     public void insertRecord(TweetModel tweetModel) throws  Exception{
 
         try {
+            System.out.println(tweetModel.getText());
             preparedStatement.setString(1,tweetModel.getText());
             preparedStatement.setString(2,tweetModel.getId());
 
@@ -85,7 +88,8 @@ public class PostGreConnector implements DatabaseConnector{
     }
     public static Timestamp getTwitterDate(String stringDate) throws ParseException
     {
-        final String TWITTER = "EEE, dd MMM yyyy HH:mm:ss Z";
+        //TODO
+        final String TWITTER = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(TWITTER, Locale.ENGLISH);
         sf.setLenient(true);
 
