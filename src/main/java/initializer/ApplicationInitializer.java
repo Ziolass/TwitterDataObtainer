@@ -25,14 +25,6 @@ public class ApplicationInitializer {
         InputParametersHandler inputParametersHandler = new InputParametersHandler(args);
         InputParametersHolder inputParametersHolder = inputParametersHandler.getInputParameters();
 
-        // DEBUG
-//        List<String> lang = new ArrayList<String>();
-//        lang.add("pl");
-//        List<String> word = new ArrayList<String>();
-//        word.add("play");
-//        word.add("plus");
-//        InputParametersHolder inputParametersHolder = new InputParametersHolder( lang, word );
-//        // DEBUG
 
         configReader = new ConfigReader();
         configModel = configReader.readConfig();

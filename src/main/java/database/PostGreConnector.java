@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -26,7 +27,8 @@ public class PostGreConnector implements DatabaseConnector{
     }
     private Connection connection;
     private PreparedStatement preparedStatement;
-    private int counter;
+    private int counter=0;
+    private int globalCounter=0;
     private static final Logger log = Logger.getLogger(PostGreConnector.class.getName());
 
 
@@ -41,7 +43,7 @@ public class PostGreConnector implements DatabaseConnector{
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/bachelor",
                         "bachelor", "bachelor");
 
-            preparedStatement = connection.prepareStatement("INSERT INTO tweets VALUES (?,?,?);");
+            preparedStatement = connection.prepareStatement("INSERT INTO tweets VALUES (?,?,?)");
 
         }catch (ClassNotFoundException cEx){
         //
@@ -50,28 +52,32 @@ public class PostGreConnector implements DatabaseConnector{
         }catch (SQLException sqlEx){
             sqlEx.printStackTrace();
         }
-        counter = 0;
-        System.out.println(counter );
-
     }
     public void insertRecord(TweetModel tweetModel) throws  Exception{
 
         try {
-            System.out.println(tweetModel.getText());
-            preparedStatement.setString(1,tweetModel.getText());
-            preparedStatement.setString(2,tweetModel.getId());
+            preparedStatement.setString(2,tweetModel.getText());
+            preparedStatement.setString(1,tweetModel.getId());
 
             preparedStatement.setTimestamp(3,getTwitterDate(tweetModel.getCreation_time()));
 
             preparedStatement.addBatch();
+
             counter++;
             if(counter==10){
                 int[] result = preparedStatement.executeBatch();
+                globalCounter += result.length;
+                log.log(Level.INFO,"Already added "+globalCounter+" records");
                 counter=0;
             }
 
         }catch (SQLException sqlE){
             sqlE.printStackTrace();
+            sqlE.getNextException().printStackTrace();
+            preparedStatement.clearParameters();
+        }catch (ParseException e){
+            preparedStatement.clearParameters();
+            e.printStackTrace();
         }
 
     }
@@ -88,12 +94,16 @@ public class PostGreConnector implements DatabaseConnector{
     }
     public static Timestamp getTwitterDate(String stringDate) throws ParseException
     {
-        //TODO
+        //TODO check if nulls are properly served 
         final String TWITTER = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(TWITTER, Locale.ENGLISH);
         sf.setLenient(true);
-
-        Date date = sf.parse(stringDate);
+        Date date;
+        try {
+             date = sf.parse(stringDate);
+        }catch (NullPointerException e){
+            throw new ParseException("Null exception",0);
+        }
         Timestamp timestamp = new Timestamp(date.getTime());
         return  timestamp;
     }

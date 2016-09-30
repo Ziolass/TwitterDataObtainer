@@ -14,15 +14,9 @@ import database.DatabaseConnector;
 import database.PostGreConnector;
 import datamodel.ConfigModel;
 import datamodel.TweetModel;
-import javafx.scene.chart.PieChart;
 import utils.JsonParser;
 import utils.input.InputParametersHolder;
 
-import java.sql.Connection;
-import java.util.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -85,11 +79,8 @@ public class TwitterClientImpl {
                 String msg = msgQueue.take();
                 tweetModel = parser.processTweet(msg.toString());
                 //DEBUG
-                System.out.println(tweetModel.getText());
                 //DEBUG
                 databaseConnector.insertRecord(tweetModel);
-                //System.out.println(parser.processTweet(msg.toString()));
-                //stringBuilder.append(parser.processTweet(msg.toString()) + "\n");
 
             } catch (Exception e) {
                 e.printStackTrace();
