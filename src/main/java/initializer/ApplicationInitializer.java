@@ -9,6 +9,7 @@ import utils.input.InputParametersHolder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -18,7 +19,7 @@ public class ApplicationInitializer {
     private static final Logger log = Logger.getLogger(InputParametersHandler.class.getName());
 
     public static void main(String[] args) {
-
+        log.log(Level.INFO,"Began streaming");
         ConfigReader configReader;
         ConfigModel configModel;
 

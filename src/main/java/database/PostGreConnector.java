@@ -94,7 +94,6 @@ public class PostGreConnector implements DatabaseConnector{
     }
     public static Timestamp getTwitterDate(String stringDate) throws ParseException
     {
-        //TODO check if nulls are properly served 
         final String TWITTER = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(TWITTER, Locale.ENGLISH);
         sf.setLenient(true);

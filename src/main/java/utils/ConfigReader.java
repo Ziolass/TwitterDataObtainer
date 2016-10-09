@@ -14,15 +14,16 @@ public class ConfigReader {
     public ConfigModel readConfig() {
         JSONParser parser = new JSONParser();
 
-        try {
+        try (FileReader fileReader = new FileReader("config.txt")){
 
-            Object obj = parser.parse(new FileReader("config.txt"));
+            Object obj = parser.parse(fileReader);
 
             JSONObject jsonObject = (JSONObject) obj;
             String consumerKey = (String) jsonObject.get("consumerKey");
             String consumerSecret = (String) jsonObject.get("consumerSecret");
             String accessToken = (String) jsonObject.get("accessToken");
             String accessTokenSecret = (String) jsonObject.get("accessTokenSecret");
+
             double SWLongitude = Double.parseDouble((String) jsonObject.get("boundingBox_SouthWest_Longitude"));
             double SWLatitude = Double.parseDouble((String) jsonObject.get("boundingBox_SouthWest_Latitude"));
             double NELongitude = Double.parseDouble((String) jsonObject.get("boundingBox_NorthEast_Longitude"));
