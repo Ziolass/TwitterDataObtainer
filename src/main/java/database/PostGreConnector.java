@@ -1,4 +1,7 @@
 package database;
+import com.sun.javafx.binding.StringFormatter;
+import datamodel.ConfigModel;
+import datamodel.SingletonConfigModel;
 import datamodel.TweetModel;
 
 import java.sql.Connection;
@@ -37,11 +40,19 @@ public class PostGreConnector implements DatabaseConnector{
     }
 
     private PostGreConnector() {
+        SingletonConfigModel singletonConfigModel = SingletonConfigModel.getInstance();
         try {
            Class.forName("org.postgresql.Driver");
 
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/bachelor",
-                        "bachelor", "bachelor");
+            String connection_details = "jdbc:postgresql://"+
+                    singletonConfigModel.getPostgres_host() + ":" +
+                    singletonConfigModel.getPostgres_port() + "/"+
+                    singletonConfigModel.getPostgres_dbName();
+
+            connection = DriverManager.getConnection(
+                    connection_details,
+                    singletonConfigModel.getPostgres_user(),
+                    singletonConfigModel.getPostgres_password());
 
             preparedStatement = connection.prepareStatement("INSERT INTO tweets VALUES (?,?,?)");
 

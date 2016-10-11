@@ -8,6 +8,7 @@ import java.util.List;
 public class InputParametersHolder {
     private final List<String> languages;
     private final List<String> keywords;
+    private final int duration;
 
     public List<String> getLanguages() {
         return languages;
@@ -17,10 +18,15 @@ public class InputParametersHolder {
         return keywords;
     }
 
-    public InputParametersHolder(List<String> languages, List<String> keywords) {
+    public int getDuration() {
+        return duration;
+    }
+
+
+    public InputParametersHolder(List<String> languages, List<String> keywords, int duration) {
         this.languages = languages;
         this.keywords = keywords;
-
+        this.duration = duration;
 
     }
 }

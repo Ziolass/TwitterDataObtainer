@@ -13,6 +13,7 @@ import com.twitter.hbc.httpclient.auth.OAuth1;
 import database.DatabaseConnector;
 import database.PostGreConnector;
 import datamodel.ConfigModel;
+import datamodel.SingletonConfigModel;
 import datamodel.TweetModel;
 import utils.JsonParser;
 import utils.input.InputParametersHolder;
@@ -32,6 +33,7 @@ public class TwitterClientImpl {
     private StatusesFilterEndpoint hosebirdEndpoint;
     private Authentication hosebirdAuth;
     private Client hosebirdClient;
+    private int streamingSecondsDuration;
 
     public static TwitterClientImpl getInstance() {
         return ourInstance;
@@ -46,15 +48,17 @@ public class TwitterClientImpl {
 
     }
 
-    public void prepareForStreaming(InputParametersHolder inputParametersHolder, ConfigModel configModel) {
+    public void prepareForStreaming(InputParametersHolder inputParametersHolder) {
 
+        this.streamingSecondsDuration = inputParametersHolder.getDuration()*60;
         hosebirdEndpoint.trackTerms(inputParametersHolder.getKeywords());
         hosebirdEndpoint.languages(inputParametersHolder.getLanguages());
+        SingletonConfigModel singletonConfigModel = SingletonConfigModel.getInstance();
 
-        hosebirdAuth = new OAuth1(configModel.getConsumerKey(),
-                configModel.getConsumerSecret(),
-                configModel.getAccessToken(),
-                configModel.getAccessTokenSecret());
+        hosebirdAuth = new OAuth1(singletonConfigModel.getConsumerKey(),
+                singletonConfigModel.getConsumerSecret(),
+                singletonConfigModel.getAccessToken(),
+                singletonConfigModel.getAccessTokenSecret());
 
         ClientBuilder builder = new ClientBuilder()
                 .name("Bachelors_first_try")                              // optional: mainly for the logs
@@ -70,16 +74,18 @@ public class TwitterClientImpl {
     public void startStreaming() {
         DatabaseConnector databaseConnector = PostGreConnector.getInstance();
         TweetModel tweetModel = null;
+        long end = System.currentTimeMillis() + (streamingSecondsDuration*1000);
 
         hosebirdClient.connect();
         JsonParser parser = new JsonParser();
 
         while (!hosebirdClient.isDone()) {
+            if(System.currentTimeMillis() >= end){
+                break;
+            }
             try {
                 String msg = msgQueue.take();
                 tweetModel = parser.processTweet(msg.toString());
-                //DEBUG
-                //DEBUG
                 databaseConnector.insertRecord(tweetModel);
 
             } catch (Exception e) {

@@ -12,8 +12,13 @@ public class ConfigModel {
     private double SWLatitude;
     private double NELongitude;
     private  double NELatitude;
+    private String postgres_host;
+    private String postgres_dbName;
+    private String postgres_port;
+    private String postgres_user;
+    private String postgres_password;
 
-    public ConfigModel(String consumerKey, String consumerSecret, String accessToken, String accessTokenSecret, double SWLongitude, double SWLatitude, double NELongitude, double NELatitude) {
+    public ConfigModel(String consumerKey, String consumerSecret, String accessToken, String accessTokenSecret, double SWLongitude, double SWLatitude, double NELongitude, double NELatitude, String postgres_host, String postgres_dbName, String postgres_port, String postgres_user, String postgres_password) {
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
         this.accessToken = accessToken;
@@ -22,6 +27,11 @@ public class ConfigModel {
         this.SWLatitude = SWLatitude;
         this.NELongitude = NELongitude;
         this.NELatitude = NELatitude;
+        this.postgres_host = postgres_host;
+        this.postgres_dbName = postgres_dbName;
+        this.postgres_port = postgres_port;
+        this.postgres_user = postgres_user;
+        this.postgres_password = postgres_password;
     }
 
     @Override
@@ -101,5 +111,44 @@ public class ConfigModel {
     public void setNELatitude(double NELatitude) {
         this.NELatitude = NELatitude;
     }
-}
 
+    public String getPostgres_password() {
+        return postgres_password;
+    }
+
+    public void setPostgres_password(String postgres_password) {
+        this.postgres_password = postgres_password;
+    }
+
+    public String getPostgres_user() {
+        return postgres_user;
+    }
+
+    public void setPostgres_user(String postgres_user) {
+        this.postgres_user = postgres_user;
+    }
+
+    public String getPostgres_port() {
+        return postgres_port;
+    }
+
+    public void setPostgres_port(String postgres_port) {
+        this.postgres_port = postgres_port;
+    }
+
+    public String getPostgres_dbName() {
+        return postgres_dbName;
+    }
+
+    public void setPostgres_dbName(String postgres_dbName) {
+        this.postgres_dbName = postgres_dbName;
+    }
+
+    public String getPostgres_host() {
+        return postgres_host;
+    }
+
+    public void setPostgres_host(String postgres_host) {
+        this.postgres_host = postgres_host;
+    }
+}

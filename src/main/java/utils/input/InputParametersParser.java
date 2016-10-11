@@ -1,7 +1,5 @@
 package utils.input;
 
-import com.google.common.collect.Lists;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,12 +11,6 @@ public class InputParametersParser {
     {
         String[] values = inputParameter.split("_");
         return Arrays.asList(values);
-
     }
 
-
-    public static void main(String[] args){
-        String a = "pl";
-        System.out.println(InputParametersParser.parseInputValues(a));
-    }
 }

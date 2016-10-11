@@ -1,5 +1,6 @@
 package utils.input;
 
+import java.text.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ public class InputParametersHandler {
         options.addOption("h", "help", false, "show help.");
         options.addOption("l", "lang", true, "Chosen language filter");
         options.addOption("k", "key", true, "Chosen keywords");
+        options.addOption("d", "duration", true, "Duration of a streaming in minutes");
     }
 
     public InputParametersHolder getInputParameters() {
@@ -36,6 +38,7 @@ public class InputParametersHandler {
         CommandLine cmd = null;
         List<String> languages = null;
         List<String> keywords = null;
+        int duration = 10;
 
 
         try {
@@ -59,11 +62,21 @@ public class InputParametersHandler {
             keywords = InputParametersParser.parseInputValues(keyValues);
             log.log(Level.INFO, "Using keywords argument -k=" + keywords.toString());
 
-        } else {
-            log.log(Level.SEVERE, "Missing v option");
+        }
+        if(cmd.hasOption("d")){
+            String durationValue = cmd.getOptionValue("d");
+            log.log(Level.INFO, "Using duration argument -d=" + durationValue);
+            try {
+                duration = Integer.parseInt(durationValue);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        else if (languages == null && keywords == null){
+            log.log(Level.SEVERE, "Missing any option");
             help();
         }
-        return new InputParametersHolder(languages,keywords);
+        return new InputParametersHolder(languages,keywords,duration);
     }
 
     private void help() {
